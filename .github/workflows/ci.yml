@@ -26,11 +26,12 @@ jobs:
       # 关键：必须要生成 Prisma Client，否则 TS 检查会报错找不到类型
       - name: Generate Prisma Client
         run: npx prisma generate
-        env: ${{ secrets.DATABASE_URL }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
       # 运行 ESLint 检查代码规范
       - name: Linting
         run: npm run lint
-        
+
       - name: Build Next.js
         run: npm run build
         # 这一步非常关键！构建时必须要有数据库连接
