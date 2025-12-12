@@ -2,7 +2,7 @@
 export default function Home() {
   return (
     <div >
-        hello world
+        景点推荐
     </div>
   );
 }
