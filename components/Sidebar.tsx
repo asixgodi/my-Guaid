@@ -12,7 +12,10 @@ import {
   Share2, 
   Plane 
 } from 'lucide-react';
-export const Sidebar = memo(() => {
+interface SidebarProps {
+    isOpen?:boolean
+}
+export const Sidebar = memo(({isOpen}:SidebarProps) => {
     const pathname = usePathname();
     const menuItems = [
         { name: "景点推荐", path: "/", icon: MapPin },
@@ -23,9 +26,10 @@ export const Sidebar = memo(() => {
     ]
     return (
         <div>
-            <aside className={cn('fiexd top-16 h-[calc(100vh-4rem)] w-60 border-r bg-white',
+            <aside className={cn('fixed top-16 h-[calc(100vh-4rem)] w-60 border-r bg-white',
                 ' shadow-md transition-transform duration-300 ease-in-out',
-                'flex flex-col',)}>
+                'flex flex-col',
+                isOpen ? 'translate-x-0' : '-translate-x-full')}>
                 {/* 菜单标题 */}
                 <div className='px-6 py-6 border-b border-t border-sidebar-border'>
                     <h2 className='text-lg font-bold'>
@@ -42,7 +46,7 @@ export const Sidebar = memo(() => {
                         variant="ghost"
                         className={cn(
                             'w-full justify-start px-4 py-3 h-14',
-                            'rounded-lg transition-all duration-200',
+                            'rounded-lg transition-all duration-100 ease-in-out',
                             'flex items-center gap-3',
                             isActive && [
                             'bg-sidebar-primary/10 text-sidebar-primary',
@@ -61,6 +65,9 @@ export const Sidebar = memo(() => {
                     );
                     })}
                 </nav>
+                <div className='px-6 py-4 border-t border-sidebar-border text-center text-sm '>
+                    <p>© 2025 Tour Guide</p>
+                </div>
             </aside>
         </div>
   )
