@@ -59,7 +59,7 @@ export const Sidebar = memo(({isOpen}:SidebarProps) => {
                         >
                         <Link href={path}>
                             <Icon className='w-5 h-5 flex-shrink-0' />
-                            <span className='truncate'>{name}</span>
+                            <span className='truncate text-lg'>{name}</span>
                         </Link>
                         </Button>
                     );

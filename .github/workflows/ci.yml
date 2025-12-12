@@ -36,7 +36,8 @@ jobs:
         run: npm run build
         # 这一步非常关键！构建时必须要有数据库连接
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }} 
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }} 
       # (可选) 如果你想检查 TypeScript 类型错误，可以加这一步
       # 前提是你 package.json 里有 "type-check": "tsc --noEmit"
       # - name: Type Checking
