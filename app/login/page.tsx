@@ -1,6 +1,7 @@
 'use client'
 import  Link  from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from "next-auth/react";
 import React, { memo,useState } from 'react'
 
 const LoginPage = memo(() => {
@@ -10,7 +11,25 @@ const LoginPage = memo(() => {
   const [loading, setLoading] = useState(false);
   const router  = useRouter()
   const handleSubmit = async(e:React.FormEvent)=>{
-
+    e.preventDefault()
+    if(!email || !password){
+      setError('请填写完整的信息')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try{
+       // 账号密码打包，发了一个 HTTP POST 请求 给后台目标地址：/api/auth/callback/credentials（这个地址是 NextAuth 自动生成的)
+      const res = await signIn('credentials',{
+        email,
+        password,
+        redirect:false
+      })
+      console.log("SignIn result:", res);
+    }catch(err){
+      setError("网络错误，请检查连接后重试");
+      setLoading(false);
+    }
   }
   return (
     <div className='flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-100'>

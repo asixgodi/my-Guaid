@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id
+  id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -27,7 +27,7 @@ model Account {
 }
 
 model Itinerary {
-  id          String   @id
+  id          String   @id @default(uuid())
   userId      String
   city        String
   schedule    Json
@@ -39,7 +39,7 @@ model Itinerary {
 }
 
 model Session {
-  id           String   @id
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -49,7 +49,7 @@ model Session {
 }
 
 model User {
-  id        String      @id
+  id        String      @id @default(uuid())
   username  String      @unique
   email     String      @unique
   name      String?
@@ -69,7 +69,7 @@ model VerificationToken {
 }
 
 model XhsNote {
-  id        String   @id
+  id        String   @id @default(uuid())
   userId    String
   title     String
   body      String   @db.Text

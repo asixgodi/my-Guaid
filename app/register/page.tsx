@@ -3,6 +3,7 @@ import React, { memo,useState,useRef, useEffect } from 'react'
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AwardIcon } from 'lucide-react';
+import { log } from 'console';
 const Register = memo(() => {
     const [email,setEmail] = useState('')
     const [username,setUsername] = useState('')
@@ -27,7 +28,7 @@ const Register = memo(() => {
       setMessage("");
       setLoading(true);
       if(!codeSent){
-        //发送验证码
+        //发送验证码,让后端接口去处理：邮箱和用户名是否已经存在，如果不存在就发送验证码
         try{
           const res = await fetch('/api/register',{
             method:'POST',
@@ -35,6 +36,8 @@ const Register = memo(() => {
             headers:{'Content-Type':'application/json'}
           })
           const data = await res.json()
+          console.log('接收到的data',data);
+          
           if(data.error){
             setError(data.error)
           }else{
@@ -44,7 +47,30 @@ const Register = memo(() => {
         }catch(err){
           setError('服务器错误，请稍后重试！')
         }
+        finally {
+           setLoading(false);
+        }
+      }else{
+        // 得到验证码后，提交验证码和注册信息进行验证
+        try {
+          const response = await fetch("/api/verify", {
+            method: "POST",
+            body: JSON.stringify({ email, username, password, code }),
+            headers: { "Content-Type": "application/json" },
+          });
+          const data = await response.json();
+
+          if (data.error) {
+            setError(data.error);
+          } else {
+            setMessage("注册成功！即将跳转...");
+            setTimeout(() => router.push("/login"), 1000);
+          }
+          } catch (err) {
+          setError("服务器错误，请稍后重试！");
+        }
       }
+        
     }
   return (
     <div className='flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-100'>
