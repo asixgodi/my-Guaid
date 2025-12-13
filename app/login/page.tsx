@@ -133,4 +133,6 @@ const LoginPage = memo(() => {
   )
 })
 
+LoginPage.displayName = 'LoginPage'
+
 export default LoginPage

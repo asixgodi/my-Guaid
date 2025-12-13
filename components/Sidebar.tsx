@@ -73,4 +73,6 @@ export const Sidebar = memo(({isOpen}:SidebarProps) => {
   )
 })
 
+Sidebar.displayName = 'Sidebar'
+
 export default Sidebar

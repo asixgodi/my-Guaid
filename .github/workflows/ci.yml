@@ -1,4 +1,4 @@
-name: Project CI
+name: Project CI/CD
 
 # 触发条件：当推送到 main 分支，或者有 Pull Request 时
 on:
@@ -17,28 +17,52 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22.21.1"
           cache: "npm"
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       # 关键：必须要生成 Prisma Client，否则 TS 检查会报错找不到类型
       - name: Generate Prisma Client
         run: npx prisma generate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Prisma generate 不会实际连接数据库，但某些场景下 Prisma 需要该变量存在
+          DATABASE_URL: mysql://user:pass@localhost:3306/db
       # 运行 ESLint 检查代码规范
       - name: Linting
         run: npm run lint
 
       - name: Build Next.js
         run: npm run build
-        # 这一步非常关键！构建时必须要有数据库连接
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }} 
+          # Next build 通常不需要真实连接，给占位值避免未配置 secrets 导致失败
+          DATABASE_URL: mysql://user:pass@localhost:3306/db
+          RESEND_API_KEY: test
       # (可选) 如果你想检查 TypeScript 类型错误，可以加这一步
       # 前提是你 package.json 里有 "type-check": "tsc --noEmit"
       # - name: Type Checking
       #   run: npx tsc --noEmit
+  
+# --- CD Job: 
+  deploy:
+    # 依赖关系：必须等 check-code 成功后才运行
+    needs: check-code
+    runs-on: ubuntu-latest
+    # 限制：只在 push 到 main 分支时才部署，PR 不部署
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      # 部署 Vercel 需要用到代码，所以也要先 checkout
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # 使用社区写好的 Vercel 部署 Action
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          # 部署到生产环境
+          vercel-prod: true

@@ -15,4 +15,6 @@ const AppLayout = memo(({children}:{children:React.ReactNode}) => {
   )
 })
 
+AppLayout.displayName = 'AppLayout'
+
 export default AppLayout

@@ -46,4 +46,6 @@ export const Header = memo(({handleToggle}:headerProps) => {
   )
 })
 
+Header.displayName = 'Header'
+
 export default Header

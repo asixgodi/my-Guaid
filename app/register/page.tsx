@@ -158,4 +158,6 @@ const Register = memo(() => {
   )
 })
 
+Register.displayName = 'Register'
+
 export default Register

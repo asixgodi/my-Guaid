@@ -6,4 +6,6 @@ const Create = memo(() => {
   )
 })
 
+Create.displayName = 'Create'
+
 export default Create

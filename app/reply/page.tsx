@@ -6,4 +6,6 @@ const Reply = memo(() => {
   )
 })
 
+Reply.displayName = 'Reply'
+
 export default Reply

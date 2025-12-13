@@ -6,4 +6,6 @@ const Tour = memo(() => {
   )
 })
 
+Tour.displayName = 'Tour'
+
 export default Tour

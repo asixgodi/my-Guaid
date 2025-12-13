@@ -6,4 +6,6 @@ const Xhs = memo(() => {
   )
 })
 
+Xhs.displayName = 'Xhs'
+
 export default Xhs
