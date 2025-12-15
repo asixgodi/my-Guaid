@@ -27,9 +27,9 @@ export const Sidebar = memo(({isOpen}:SidebarProps) => {
     return (
         <div>
             <aside className={cn('fixed top-16 h-[calc(100vh-4rem)] w-60 border-r bg-white',
-                ' shadow-md transition-transform duration-300 ease-in-out',
-                'flex flex-col',
-                isOpen ? 'translate-x-0' : '-translate-x-full')}>
+                'shadow-md transition-transform duration-300 ease-in-out',
+                'flex flex-col z-50',
+                isOpen ? 'translate-x-0 ' : '-translate-x-full')}>
                 {/* 菜单标题 */}
                 <div className='px-6 py-6 border-b border-t border-sidebar-border'>
                     <h2 className='text-lg font-bold'>

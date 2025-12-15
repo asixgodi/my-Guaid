@@ -1,11 +1,13 @@
 'use client'
 import React, { memo,useState } from 'react'
-
+import useTourStore from './store/useTourStore'
+import { useRouter } from 'next/navigation'
 const Home = memo(() => {
   const [city,setCity] = useState('')
   const [day,setDay] = useState(0)
   const [loading,setLoading] = useState(false)
   const [error,setError] = useState('') 
+  const router = useRouter()
   async function fetchTourismGuide(e:React.FormEvent){
     e.preventDefault()
     setError('')
@@ -18,6 +20,16 @@ const Home = memo(() => {
     try{
       const res = await fetch(`/api/getTourismGuide?city=${city}&days=${day}`)
       const data = await res.json();
+      if(res.ok && data.schedule){
+         useTourStore.getState().setCity(data.city || "");
+         useTourStore.getState().setTourGuide({
+          city: data.city || "",
+          schedule: data.schedule,
+        });
+        router.push('/touronceplan')
+      }else{
+        setError(data.message || '获取行程失败，请重试')
+      }
     }catch(err){
       setError('请求失败，请稍后重试')
       console.log('请求失败',err);
@@ -98,7 +110,7 @@ const Home = memo(() => {
 
             {/* 推荐标签 */}
             <div className="flex flex-wrap justify-center gap-3 pt-2 text-slate-100/80">
-              {["北京", "上海", "深圳", "杭州", "成都", "重庆"].map((tag) => (
+              {!loading &&["北京", "上海", "深圳", "杭州", "成都", "重庆"].map((tag) => (
                 <button
                   type="button"
                   key={tag}
