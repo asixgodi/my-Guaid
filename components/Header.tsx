@@ -22,8 +22,8 @@ export const Header = memo(({handleToggle}:headerProps) => {
             >
                 <Menu/>
             </Button>
-            <div className='ml-20 pl-10'>
-                <div className='font-bold text-xl'>Tour-Guaid</div>
+            <div className='md:ml-20 md:pl-10 ml-10 pl-5'>
+                <div className='font-bold text-sm md:text-xl'>Tour-Guaid</div>
             </div>
             <div className='ml-auto flex-shrink-0 text-right mr-4'>
                 {session?.user?.username?(
