@@ -20,7 +20,7 @@ export const Sidebar = memo(({isOpen}:SidebarProps) => {
     const menuItems = [
         { name: "景点推荐", path: "/", icon: MapPin },
         { name: "地图推荐", path: "/create", icon: Map },
-        { name: "AI", path: "/reply", icon: Sparkles },
+        { name: "AI助手", path: "/reply", icon: Sparkles },
         { name: "小红书链接解析", path: "/xhs", icon: Share2 },
         { name: "我的行程", path: "/tour", icon: Plane },
     ]

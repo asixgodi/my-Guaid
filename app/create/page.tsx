@@ -104,7 +104,7 @@ const Create = memo(() => {
             {/* 兴趣选择 */}
             <div className='space-y-4 mt-8'>
               <h3 className='text-xl font-semibold text-gray-700 '>选择兴趣</h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 {
                   interests.map((interest)=>(
                     <motion.div
