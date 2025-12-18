@@ -19,6 +19,7 @@ const Tour = memo(() => {
   const [loading,setLoading] = useState(false)
   const {data:session,status} = useSession()
   const [itineraries,setItineraries] = useState<any[]>([])
+  const [xhsNotes,setXhsNotes] = useState<any[]>([])
   const {setTourGuide,setCity} = useTourStore()
 
   // 获取用户行程
@@ -34,6 +35,19 @@ const Tour = memo(() => {
       console.error('Failed to fetch itineraries:',error)
     }finally{
       setLoading(false)
+    }
+  },[session])
+  
+  // 获取用户小红书笔记
+  const fetchXhsNotes = useCallback(async()=>{
+    if(!session?.user?.id) return
+    try{
+      const res = await fetch('/api/xhs/notes')
+      if(!res.ok) throw new Error('获取小红书笔记失败')
+      const data = await res.json()
+      setXhsNotes(data)
+    }catch(error){
+      console.error('获取小红书笔记失败:',error)
     }
   },[session])
 
@@ -55,6 +69,22 @@ const Tour = memo(() => {
       }
   },[])
 
+  const deleteXhsNote = useCallback(async(id:string,e:React.MouseEvent)=>{
+    e.stopPropagation();
+    if (!confirm("确定要删除这个小红书笔记吗？")) return;
+
+    try {
+      const response = await fetch(`/api/xhs/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("删除小红书笔记失败");
+      setXhsNotes((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("删除小红书笔记失败:", error);
+      alert("删除小红书笔记失败，请稍后重试");
+    }
+  },[])
 
   // 跳转行程详情页
   const goToDetail = (item:any)=>{
@@ -62,11 +92,18 @@ const Tour = memo(() => {
     setCity(item.city)
     router.push('/touronceplan')
   }
+
+    // 点击小红书笔记跳转到详情页
+  const goToXhsDetail = (id: any) => {
+    router.push(`/xhstour?noteId=${id}`); // 跳转到小红书详情页
+  };
+
   useEffect(()=>{
     if(status === 'authenticated'){
       fetchItineraries()
+      fetchXhsNotes()
     }
-  },[status,fetchItineraries])
+  },[status,fetchItineraries,fetchXhsNotes])
   
   return (
     <div className='constainer mx-auto p-5'>
@@ -126,6 +163,49 @@ const Tour = memo(() => {
         </Masonry>
       ) :(
         <p className='text-center text-gray-500 mb-8'>暂无行程数据</p>
+      )}
+
+      {/* 小红书笔记 */}
+      <h1 className='text-3xl font-bold mb-6'>小红书笔记</h1>
+      {loading ? (
+        <p className='text-center text-gray-500 mb-8'>行程数据加载中</p>
+      ) : (
+        xhsNotes.length >0 ? (
+          <Masonry breakpointCols={breakpointColumnsObj} className="flex gap-6" columnClassName="p-4">
+            {
+              xhsNotes.map((item)=>(
+                <div 
+                  key={item.id}
+                  className="relative rounded-xl overflow-hidden bg-white shadow-lg mb-6 cursor-pointer"
+                  onClick={()=>goToXhsDetail(item.id)}
+                >
+                  <img 
+                    src={item.images?.[0]} alt={item.title}
+                    className='w-full h-auto transform transition-transform duration-300 hover:scale-103'
+                  />
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h2 className="text-lg font-semibold text-gray-800">{item.title}</h2>
+                      <button
+                        onClick={(event) => deleteXhsNote(item.id, event)}
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                        title="删除小红书笔记"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                    <div className="flex justify-between items-center text-sm text-gray-600">
+                      <span>{item.jsonBody?.data?.length || 0} 天行程</span>
+                      <span>创建于 {new Date(item.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </Masonry>
+        ) :(
+          <p className='text-center text-gray-500 mb-8'>暂无小红书笔记数据</p>
+        )
       )}
     </div>
   )

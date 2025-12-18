@@ -23,9 +23,16 @@ interface DayData {
   places: Place[];
 }
 
+// 它的键 (Key) 是地点名称（字符串），它的值 (Value) 必须是包含两个数字的数组（代表经纬度）
+// 用来缓存已经获取过的经纬度，避免重复请求
+  const coordinatesCache: { [key: string]: [number, number] } = {};
+
+
 // 将主要逻辑抽取到一个单独的组件，后面用 Suspense 包裹
 function XhsDdContent() {
+  // 当前选中的是哪一天
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
+  // placesWithCoordinates 存储当前选中天的地点及其经纬度
   const [placesWithCoordinates, setPlacesWithCoordinates] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const data = useXhsStore((state) => state.data);
@@ -38,7 +45,7 @@ function XhsDdContent() {
 
   // 如果不存在数据，就从 store 或数据库加载数据
   useEffect(() => {
-    if (!data && noteId) {
+    if (noteId && (!data || data.id !== noteId)) {
       fetch(`/api/xhs/${noteId}`).then(async (res) => {
         const noteData = await res.json();
         if (noteData) useXhsStore.getState().setData(noteData);
@@ -46,7 +53,7 @@ function XhsDdContent() {
     }
   }, [noteId, data]);
 
-  // 解析数据
+  // 这里的data本身就是js的对象。主要目的是得到jsonBodyArray，将day转换成number类型，其他不变
   if (data?.jsonBody) {
     try {
       const parsedData = typeof data.jsonBody === "string" 
@@ -62,8 +69,7 @@ function XhsDdContent() {
       console.error("JSON 解析错误:", error);
     }
   }
-  // 它的键 (Key) 是地点名称（字符串），它的值 (Value) 必须是包含两个数字的数组（代表经纬度）
-  const coordinatesCache: { [key: string]: [number, number] } = {};
+  
   const limit = pLimit(3);
 
   // 获取地点经纬度的函数，带重试机制
@@ -92,6 +98,7 @@ function XhsDdContent() {
     return null;
   }
 
+  // 处理点击某一天的逻辑,更新expandedDay和placesWithCoordinates的state
   const handleDayClick = async (day: number) => {
     setExpandedDay((prev) => (prev === day ? null : day));
     if (day === null) return;
@@ -118,7 +125,7 @@ function XhsDdContent() {
 //   }, [jsonBodyArray]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-16">
+    <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-gray-50 to-gray-100 py-16">
       <div className="container mx-auto px-6 lg:px-24">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3 tracking-tight">{title}</h1>

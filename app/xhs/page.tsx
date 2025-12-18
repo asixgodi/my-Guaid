@@ -9,7 +9,6 @@ import  useXhsStore  from "@/app/store/useXhsStore";
 const Xhs = memo(() => {
   const [loading,setLoading] = useState(false)
   const [inputText,setInputText] = useState("")
-  const [forceOcr, setForceOcr] = useState(false); // 勾选框状态
   const [errorMessage,setErrorMessage] = useState<string | null>(null)
   const {data:session} = useSession()
   const router = useRouter();
@@ -26,7 +25,7 @@ const Xhs = memo(() => {
       const parseRes = await fetch('/api/xhs/parse', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ link: inputText.trim(), forceOcr }),
+        body: JSON.stringify({ link: inputText.trim() }),
       })
       const parseData = await parseRes.json();
       if(!parseRes.ok){
@@ -42,7 +41,7 @@ const Xhs = memo(() => {
       console.log("分析结果:", analyzeData);
       if (!analyzeRes.ok || analyzeData.error) throw new Error(analyzeData.error || "保存失败");
       useXhsStore.getState().setData(analyzeData);
-      router.push(`/dd?noteId=${analyzeData.id}`);
+      router.push(`/xhstour?noteId=${analyzeData.id}`);
     }catch(err:any){
       setErrorMessage(err.message || "解析失败，请稍后再试。")
     }finally{
@@ -71,11 +70,11 @@ const Xhs = memo(() => {
               onChange={(e)=>setInputText(e.target.value)}
               placeholder="粘贴小红书分享内容..."
               disabled={loading}
-              className='w-full border border-gray-300 rounded-md p-4 h-32 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none'
+              className='w-full border border-gray-300 rounded-md p-4 h-32 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none mb-4'
             />
           </motion.div>
           {/* 勾选框：执行OCR */}
-          <div className='flex items-center mt-4 space-x-2 mb-6'>
+          {/* <div className='flex items-center mt-4 space-x-2 mb-6'>
             <input
               type='checkbox'
               id='checkbox'
@@ -84,7 +83,7 @@ const Xhs = memo(() => {
               className='mr-2 h-4 w-4'
             />
             <label htmlFor="checkbox" className='text-sm text-gray-700'>如果刚刚解析的内容不一致，请勾选这个，不过识别会有点久哦</label>
-          </div>
+          </div> */}
 
           {/* 错误提醒 */}
           {errorMessage && (
