@@ -2,13 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
+    console.log("Cookies:", req.cookies.getAll().map(c => c.name));
     // 1. 获取 Token
     // getToken 会自动帮你读取 Cookie 并解密，如果 Cookie 不存在或无效，它返回 null
     const token = await getToken({ 
         req, 
-        secret: process.env.NEXTAUTH_SECRET 
+        secret: process.env.NEXTAUTH_SECRET,
+        // 强制在本地生产环境测试时 (http://localhost) 禁用 secureCookie
+        // 只有当协议是 https 时才开启 secureCookie
+        secureCookie: req.nextUrl.protocol === "https:"
     });
-
+     console.log(`[Middleware] Token存在: ${!!token}`);
     // 2. 核心判断逻辑
     // 如果没有 Token (说明没登录)，则强制跳转去登录页
     if (!token) {

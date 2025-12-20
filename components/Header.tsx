@@ -19,6 +19,7 @@ export const Header = memo(({handleToggle}:headerProps) => {
                 size='icon' 
                 className='absolute left-4'
                 onClick={handleToggle}
+                aria-label='切换侧边栏'
             >
                 <Menu/>
             </Button>
@@ -29,7 +30,7 @@ export const Header = memo(({handleToggle}:headerProps) => {
                 {session?.user?.username?(
                     <div>
                         <span>欢迎，{session.user.username}</span>
-                        <button className='border rounded-md px-3 py-2 ml-2 hover:bg-gray-100 transition' onClick={()=>signOut()}>
+                        <button aria-label='退出登录' className='border rounded-md px-3 py-2 ml-2 hover:bg-gray-100 transition' onClick={()=>signOut()}>
                             退出登录
                         </button>
                     </div>

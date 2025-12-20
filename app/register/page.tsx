@@ -3,7 +3,6 @@ import React, { memo,useState,useRef, useEffect } from 'react'
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AwardIcon } from 'lucide-react';
-import { log } from 'console';
 const Register = memo(() => {
     const [email,setEmail] = useState('')
     const [username,setUsername] = useState('')
@@ -145,6 +144,7 @@ const Register = memo(() => {
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all disabled:bg-gray-400"
             disabled={loading}
+            aria-label='注册'
           >
             {loading ? "处理中..." : codeSent ? "提交验证码" : "发送验证码"}
           </button>

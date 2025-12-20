@@ -15,7 +15,7 @@ const LoginPage = memo(() => {
   const {status} = useSession()
   useEffect(()=>{
     if(status==='authenticated'){
-      router.push('/')
+      window.location.href = '/' // 登录成功后跳转到首页
     }
   },[status,router])
 
@@ -94,7 +94,7 @@ const LoginPage = memo(() => {
                 required
               />
           </div>
-          <button type='submit' className='w-full bg-blue-600 py-3 rounded-md font-medium hover:bg-blue-700 text-white '>
+          <button type='submit' aria-label='登录' className='w-full bg-blue-600 py-3 rounded-md font-medium hover:bg-blue-700 text-white '>
             {loading ? (
               <span className="flex items-center justify-center">
                 <svg

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; // 用于获取 URL 参数
 import  useXhsStore  from "@/app/store/useXhsStore";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import pLimit from "p-limit";
 import { Suspense } from "react"; // 引入 Suspense
@@ -125,6 +125,7 @@ function XhsDdContent() {
 //   }, [jsonBodyArray]);
 
   return (
+    <LazyMotion features={domAnimation}>
     <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-gray-50 to-gray-100 py-16">
       <div className="container mx-auto px-6 lg:px-24">
         <div className="text-center mb-12">
@@ -150,7 +151,7 @@ function XhsDdContent() {
           </div>
           <AnimatePresence mode="wait">
             {expandedDay && (
-              <motion.div
+              <m.div
                 key={expandedDay}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -191,12 +192,13 @@ function XhsDdContent() {
                     <p className="text-gray-500 text-center py-4">暂无行程</p>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>
       </div>
     </main>
+    </LazyMotion>
   );
 }
 

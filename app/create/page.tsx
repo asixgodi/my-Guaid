@@ -1,7 +1,7 @@
 'use client'
 import React, { memo,useState } from 'react'
 import dynamic from "next/dynamic";
-import {motion} from 'framer-motion'
+import { LazyMotion, domAnimation, m } from "framer-motion"
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ import { Palette, History, Music, Mountain, Utensils, Building2, Trees, Shopping
 import { Card,CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+//import Map from '@/components/Map';
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
 // 设置card的动画
@@ -69,6 +70,7 @@ const Create = memo(() => {
     }
   }
   return (
+    <LazyMotion features={domAnimation}>
     <div className='flex h-[calc(100vh-4rem)] p-3'>
       {/* 地图区域 */}
       <div className='w-3/5 relative rounded-md'>
@@ -78,7 +80,7 @@ const Create = memo(() => {
         </div>
       </div>
       {/* 右侧表达区域 */}
-      <motion.div
+      <m.div
         variants={cardVariants}
         initial="hidden"
         animate="visible"
@@ -107,7 +109,7 @@ const Create = memo(() => {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 {
                   interests.map((interest)=>(
-                    <motion.div
+                    <m.div
                       key={interest.id}
                       whileHover={{scale:1.03}}
                       onClick={()=>handleInterestsToggle(interest.id)}
@@ -126,7 +128,7 @@ const Create = memo(() => {
                         {interest.icon}
                         <span>{interest.label}</span>
                       </label>
-                    </motion.div>
+                    </m.div>
                   ))
                 }
               </div>
@@ -160,18 +162,19 @@ const Create = memo(() => {
                 </Button>
             </div>
             {error && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="text-red-500 text-sm bg-red-50 p-2 rounded"
                 >
                   {error}
-                </motion.div>
+                </m.div>
             )}    
           </CardContent>
         </Card>
-      </motion.div>
+      </m.div>
     </div>
+    </LazyMotion>
   )
 })
 

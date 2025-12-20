@@ -2,7 +2,7 @@
 import { useSession } from 'next-auth/react'
 import React, { memo } from 'react'
 import { useState } from 'react'
-import {motion} from 'framer-motion'
+import { LazyMotion, domAnimation, m } from "framer-motion"
 import { cn } from '@/lib/utils'
 import { useRouter } from "next/navigation";
 import  useXhsStore  from "@/app/store/useXhsStore";
@@ -50,8 +50,9 @@ const Xhs = memo(() => {
   }
   
   return (
+    <LazyMotion features={domAnimation}>
     <div className='min-h-[calc(100vh-4rem)] bg-gradient-to-br from-pink-50 via-white to-red-50 flex items-center justify-center'>
-      <motion.div
+      <m.div
         initial={{opacity:0,y:20}}
         animate={{opacity:1,y:0}}
         transition={{duration:0.5}}
@@ -62,7 +63,7 @@ const Xhs = memo(() => {
           粘贴小红书分享链接，快速解析笔记内容，生成专属行程！
         </p>
         <form onSubmit={handleSubmit}>
-          <motion.div 
+          <m.div 
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="relative"
           >
             <textarea
@@ -72,7 +73,7 @@ const Xhs = memo(() => {
               disabled={loading}
               className='w-full border border-gray-300 rounded-md p-4 h-32 focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none mb-4'
             />
-          </motion.div>
+          </m.div>
           {/* 勾选框：执行OCR */}
           {/* <div className='flex items-center mt-4 space-x-2 mb-6'>
             <input
@@ -87,7 +88,7 @@ const Xhs = memo(() => {
 
           {/* 错误提醒 */}
           {errorMessage && (
-            <motion.p
+            <m.p
               initial={{opacity:0}}
               animate={{opacity:1}}
               className='text-red-500 text-center'
@@ -101,15 +102,16 @@ const Xhs = memo(() => {
                   </a>
                 </span>
               )}
-            </motion.p>
+            </m.p>
           )}
 
           {/* 按钮 */}
-          <motion.button
+          <m.button
             type='submit'
             disabled={loading || !inputText.trim() || !session}
             whileHover={{ scale: !loading ? 1.05 : 1 }}
             whileTap={{ scale: !loading ? 0.95 : 1 }} 
+            aria-label='解析'
             className={cn(
               'w-full py-3 text-white rounded-md transition-all duration-300 flex items-center justify-center space-x-2',
               loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600'
@@ -135,15 +137,16 @@ const Xhs = memo(() => {
             ) : (
               <span>解析链接</span>
             )}
-          </motion.button>
+          </m.button>
         </form>
         <div className="mt-8 text-center">
           <p className="text-gray-400 text-sm">
             Powered by <span className="text-pink-500 font-semibold">小红书</span>
           </p>
         </div>
-      </motion.div>
+      </m.div>
     </div>
+    </LazyMotion>
   )
 })
 

@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ReactMarkdown from "react-markdown";
+// import ReactMarkdown from "react-markdown";
+import dynamic from "next/dynamic";
+const ReactMarkdown = dynamic(() => import("react-markdown"), { loading: () => <p>Loading...</p> });
 import { cn } from '@/lib/utils';
 interface Message {
   role: "user" | "assistant";
@@ -77,6 +79,7 @@ const Reply = memo(() => {
           <Button
             variant="outline"
             disabled={message.length === 0}
+            aria-label='清空聊天'
           >
             <Trash2 className="h-4 w-4 mr-2" /> 清空聊天
           </Button>
@@ -151,6 +154,7 @@ const Reply = memo(() => {
               <Button
                 type='submit'
                 className='rounded-full bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-400'
+                aria-label='发送'
               >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
