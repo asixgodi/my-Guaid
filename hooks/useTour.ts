@@ -2,28 +2,13 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useTourStore from "@/app/store/useTourStore";
 
-export function useItinerary(userId: string) {
+export function useItinerary(userId: string,initialItineraries: any[] = [], initialXhsNotes: any[] = []) {
   const router = useRouter();
   const { setTourGuide, setCity } = useTourStore();
   const [loading, setLoading] = useState(false);
-  const [itineraries, setItineraries] = useState<any[]>([]);
-  const [xhsNotes, setXhsNotes] = useState<any[]>([]);
-    // 获取用户行程列表
-    const fetchItineraries = useCallback(async()=>{
-        if(!userId) return
-        setLoading(true)
-        try{  
-          const res = await fetch(`/api/itinerary/list`)
-          if (!res.ok) throw new Error("获取行程数据失败");
-          const data = await res.json();
-          setItineraries(data);
-        }catch(error){
-          console.error('Failed to fetch itineraries:',error)
-        }finally{
-          setLoading(false)
-        }
-      },[userId])
-
+  const [itineraries, setItineraries] = useState(initialItineraries);
+  const [xhsNotes, setXhsNotes] = useState(initialXhsNotes);
+    
       // 删除用户行程
         const deleteItinerary = useCallback(async(id:string,e:React.MouseEvent)=>{
            e.stopPropagation();
@@ -42,18 +27,6 @@ export function useItinerary(userId: string) {
             }
     },[])
 
-    //获取用户小红书行程
-      const fetchXhsNotes = useCallback(async()=>{
-        if(!userId) return
-        try{
-          const res = await fetch('/api/xhs/notes')
-          if(!res.ok) throw new Error('获取小红书笔记失败')
-          const data = await res.json()
-          setXhsNotes(data)
-        }catch(error){
-          console.error('获取小红书笔记失败:',error)
-        }
-      },[userId])
 
       // 删除小红书笔记
       const deleteXhsNote = useCallback(async(id:string,e:React.MouseEvent)=>{
@@ -88,10 +61,8 @@ export function useItinerary(userId: string) {
   return {
     itineraries,
     loading,
-    fetchItineraries,
     deleteItinerary,
     xhsNotes,
-    fetchXhsNotes,
     deleteXhsNote,
     goToDetail,
     goToXhsDetail,
